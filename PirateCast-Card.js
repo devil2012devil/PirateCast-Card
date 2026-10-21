@@ -43,7 +43,7 @@ class PirateCastCard extends HTMLElement {
 
   static getStubConfig() {
     return {
-      entity: "sensor.piratecast_pressure_change_3h",
+      entity: "sensor.izmenenie_davleniia_za_3_ch",
       title: "Изменение давления за 3 часа",
       min: -4,
       max: 4
