@@ -9,12 +9,14 @@ const min = Number(config.min ?? -4);
 const max = Number(config.max ?? 4);
 
 if (!Number.isFinite(min) || !Number.isFinite(max) || min >= max) {
-  throw new Error("PirateCast Card: min должен быть меньше max");
+  throw new Error(
+    "PirateCast Card: min должен быть меньше max"
+  );
 }
 
-if (!(min < 0 && max > 0)) {
+if (Math.abs(min + max) > 1e-9) {
   throw new Error(
-    "PirateCast Card: диапазон должен включать ноль"
+    "PirateCast Card: диапазон должен быть симметричным относительно нуля"
   );
 }
 
@@ -90,9 +92,9 @@ const displayValue = valid
   ? `${value > 0 ? "+" : ""}${value.toFixed(2)} мм рт. ст.`
   : "Нет данных";
 
-const range = cfg.max - cfg.min;
-const tick1 = cfg.min + range * 0.25;
-const tick3 = cfg.min + range * 0.75;
+// Симметричная шкала: например, −4, −2, 0, +2, +4.
+const tick1 = cfg.min / 2;
+const tick3 = cfg.max / 2;
 
 const formatTick = number => {
   const rounded = Math.round(number * 100) / 100;
@@ -101,6 +103,7 @@ const formatTick = number => {
     : String(rounded);
 };
 
+// Стрелка касается маркера и направлена по тенденции давления.
 const arrow = falling
   ? `<svg class="trend falling" viewBox="0 0 32 12"
          role="img" aria-label="Давление снижается">
@@ -166,6 +169,7 @@ this.shadowRoot.innerHTML = `
       background: transparent;
     }
 
+    /* Непрерывный маркер: втрое выше самой шкалы. */
     .marker {
       position: absolute;
       left: ${position}%;
@@ -178,6 +182,7 @@ this.shadowRoot.innerHTML = `
       z-index: 2;
     }
 
+    /* Стрелка находится на центральной оси шкалы. */
     .trend {
       position: absolute;
       top: 50%;
@@ -194,10 +199,12 @@ this.shadowRoot.innerHTML = `
       pointer-events: none;
     }
 
+    /* Отрицательное значение: стрелка смотрит влево. */
     .trend.falling {
       left: calc(${position}% - 1px);
     }
 
+    /* Положительное значение: стрелка смотрит вправо. */
     .trend.rising {
       left: calc(${position}% - 31px);
       stroke: #39BFD8;
