@@ -22,7 +22,7 @@ class PirateCastCard extends HTMLElement {
     }
 
     this._config = {
-      entity: "sensor.piratecast_pressure_change_3h",
+      entity: "sensor.izmenenie_davleniia_za_3_ch",
       title: "Изменение давления за 3 часа",
       ...config,
       min,
